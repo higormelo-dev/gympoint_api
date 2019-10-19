@@ -3,30 +3,22 @@ import * as Yup from 'yup';
 import Student from '../models/Student';
 
 class StudentsController {
+  // Listar todos os estudantes
+  async index(request, response) {
+    const students = await Student.findAll();
+    return response.json(students);
+  }
+
   async store(request, response) {
-    const students = await Student.findAll()
-      .then(userResponse => {
-        response.status(200).json(userResponse);
-      })
-      .catch(error => {
-        response.status(400).send(error);
-      });
-    console.log(students);
     const schema = Yup.object().shape({
       name: Yup.string().required(),
-      email: Yup.string()
-        .email()
-        .required(),
-      age: Yup.number()
-        .required()
-        .positive()
-        .integer(),
-      weight: Yup.string().required(),
-      height: Yup.number()
-        .required()
-        .positive()
-        .integer(),
+      email: Yup.string().required(),
+      age: Yup.number().required(),
+      height: Yup.number().required(),
+      weight: Yup.number().required(),
     });
+
+    console.log(request.body);
 
     if (!(await schema.isValid(request.body))) {
       return response.status(400).json({ error: 'Validation falis Student' });
@@ -35,8 +27,6 @@ class StudentsController {
     const StudentExists = await Student.findOne({
       where: { email: request.body.email },
     });
-
-    console.log(request.body.email);
 
     if (StudentExists) {
       return response.status(400).json({ error: 'Student already exists.' });
