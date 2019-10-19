@@ -11,6 +11,6 @@ routes.post('/sessions', SessionsController.store);
 /* a proteção de rotas valerá após o middleware global */
 routes.use(authMiddleware);
 routes.post('/students', StudentsController.store);
-// routes.put('/students', StudentsController.update);
+routes.put('/students/:id', StudentsController.update);
 
 export default routes;
