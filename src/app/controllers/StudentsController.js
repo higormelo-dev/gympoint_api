@@ -3,11 +3,18 @@ import * as Yup from 'yup';
 import Student from '../models/Student';
 
 class StudentsController {
-  // Listar todos os estudantes
-  // async index(request, response) {
-  //   const students = await Student.findAll();
-  //   return response.json(students);
-  // }
+  async index(request, response) {
+    const { page = 1 } = request.query;
+    const limit = 20;
+
+    const students = await Student.findAll({
+      order: [['id', 'desc']],
+      limit: 20,
+      offset: (page - 1) * limit,
+    });
+
+    return response.json(students);
+  }
 
   async store(request, response) {
     const schema = Yup.object().shape({
@@ -40,6 +47,20 @@ class StudentsController {
     );
 
     return response.json({ name, email, age, weight, height });
+  }
+
+  async show(request, response) {
+    const { id } = request.params;
+
+    const student = await Student.findByPk(id, {
+      attributes: ['id', 'name', 'email', 'age', 'height', 'weight'],
+    });
+
+    if (!student) {
+      return response.status(400).json({ error: 'Student not found.' });
+    }
+
+    return response.json(student);
   }
 
   async update(request, response) {
@@ -79,6 +100,21 @@ class StudentsController {
     );
 
     return response.json({ name, email, age, weight, height });
+  }
+
+  async destroy(request, response) {
+    const { id } = request.params;
+
+    const StudentExists = await Student.findByPk(id);
+    if (!StudentExists) {
+      return response.status(400).json({ error: 'Student not found.' });
+    }
+
+    await Student.destroy({ where: { id } });
+
+    return response
+      .status(200)
+      .json({ message: 'Student deleted successfully.' });
   }
 }
 

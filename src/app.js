@@ -1,5 +1,7 @@
 import express from 'express';
+/* Route */
 import routes from './routes';
+/* Database */
 import './database';
 
 class App {

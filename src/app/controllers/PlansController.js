@@ -47,7 +47,9 @@ class PlansController {
   async show(request, response) {
     const { id } = request.params;
 
-    const plan = await Plan.findByPk(id);
+    const plan = await Plan.findByPk(id, {
+      attributes: ['id', 'title', 'duration', 'price', 'active'],
+    });
 
     if (!plan) {
       return response.status(400).json({ error: 'Plan not found.' });
