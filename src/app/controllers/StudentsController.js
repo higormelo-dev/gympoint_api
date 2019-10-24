@@ -1,3 +1,4 @@
+/* Libs */
 import * as Yup from 'yup';
 /* Models */
 import Student from '../models/Student';
@@ -9,7 +10,7 @@ class StudentsController {
 
     const students = await Student.findAll({
       order: [['id', 'desc']],
-      limit: 20,
+      limit,
       offset: (page - 1) * limit,
     });
 

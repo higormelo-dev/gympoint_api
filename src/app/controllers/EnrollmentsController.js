@@ -1,7 +1,7 @@
 /* Libs */
 import * as Yup from 'yup';
 import { addMonths, parseISO, isBefore, format } from 'date-fns';
-import pt from 'date-fns/locale/pt';
+import ptBr from 'date-fns/locale/pt-BR';
 /* Models */
 import Enrollment from '../models/Enrollment';
 import Student from '../models/Student';
@@ -118,10 +118,10 @@ class EnrollmentsController {
         parseISO(start_date),
         "dd'/'MM'/'yyyy",
         {
-          locale: pt,
+          locale: ptBr,
         }
       )} a ${format(end_date, "dd'/'MM'/'yyyy", {
-        locale: pt,
+        locale: ptBr,
       })}`,
       student: student_id,
     });
@@ -253,10 +253,10 @@ class EnrollmentsController {
         start_date,
         "dd'/'MM'/'yyyy",
         {
-          locale: pt,
+          locale: ptBr,
         }
       )} a ${format(end_date, "dd'/'MM'/'yyyy", {
-        locale: pt,
+        locale: ptBr,
       })}`,
       student: student_id,
     });
@@ -277,6 +277,21 @@ class EnrollmentsController {
       end_date,
       price,
     });
+  }
+
+  async destroy(request, response) {
+    const { id } = request.params;
+
+    const EnrollmentExists = await Enrollment.findByPk(id);
+    if (!EnrollmentExists) {
+      return response.status(400).json({ error: 'Enrollment not found.' });
+    }
+
+    await Enrollment.destroy({ where: { id } });
+
+    return response
+      .status(200)
+      .json({ message: 'Enrollment deleted successfully' });
   }
 }
 
